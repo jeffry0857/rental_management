@@ -1,7 +1,11 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-
+import "firebase/compat/storage";
+// import firebase from "firebase/app";
+// import "firebase/firestore";
+// import "firebase/auth";
+// import "firebase/storage";
 const firebaseConfig = {
   apiKey: "AIzaSyDkAc7BIhwky6uXzhr3psh3OZ687ckP6tY",
   authDomain: "rental-management-45bc4.firebaseapp.com",
@@ -15,7 +19,8 @@ firebase.initializeApp(firebaseConfig);
 
 const projectFirestore = firebase.firestore();
 const projectAuth = firebase.auth();
+const projectStorage = firebase.storage();
 
 const timestamp = firebase.firestore.FieldValue.serverTimestamp;
 
-export { projectFirestore, projectAuth, timestamp };
+export { projectFirestore, projectAuth, projectStorage, timestamp };

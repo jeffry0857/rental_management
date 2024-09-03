@@ -1,10 +1,12 @@
 <template>
   <div class="navbar">
     <nav>
+      <img src="@/assets/logo.png">
       <h1><router-link :to="{ name: 'Home' }">Muso Ninjas</router-link></h1>
       <div class="links">
         <div v-if="user">
-          <button>Logout</button>
+          <router-link :to="{ name: 'CreatePlaylist' }">Create Playlist</router-link>
+          <button @click="handleClick">Logout</button>
         </div>
         <div v-else>
           <router-link class="btn" :to="{ name: 'Signup' }">Signup</router-link>

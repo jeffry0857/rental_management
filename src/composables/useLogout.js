@@ -3,6 +3,7 @@ import { projectAuth } from "../firebase/config";
 
 // refs
 const error = ref(null);
+const isPending = ref(false);
 
 // logout function
 const logout = async () => {
@@ -11,6 +12,7 @@ const logout = async () => {
 
   try {
     await projectAuth.signOut();
+    isPending.value = false;
   } catch (err) {
     console.log(err.message);
     error.value = err.message;

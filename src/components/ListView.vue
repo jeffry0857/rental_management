@@ -14,6 +14,7 @@
         </div>
       </div>
     </router-link>
+    {{ playlists }}
   </div>
 </template>
 
@@ -35,6 +36,8 @@ export default {
   }
   .single:hover {
     box-shadow: 1px 2px 3px rgba(50,50,50,0.05);
+    transform: scale(1.02);
+    transition: all ease 0.2s;
   }
   .thumbnail {
     max-width: 100px;

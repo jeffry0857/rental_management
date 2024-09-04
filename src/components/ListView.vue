@@ -14,7 +14,6 @@
         </div>
       </div>
     </router-link>
-    {{ playlists }}
   </div>
 </template>
 
@@ -30,7 +29,7 @@ export default {
     align-items: center;
     padding: 20px;
     border-radius: 10px;
-    background: wheat;
+    background: white;
     margin: 16px 0;
     transition: all ease 0.2s;
   }

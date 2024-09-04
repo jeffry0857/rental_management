@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { projectAuth } from "@/firebase/config";
+import { projectAuth } from "../firebase/config";
 
 const requireAuth = (to, from, next) => {
   let user = projectAuth.currentUser;
@@ -36,9 +36,14 @@ const routes = [
     path: "/playlists/:id",
     name: "PlaylistDetails",
     component: () => import("@/views/playlists/PlaylistDetails.vue"),
-    //component: PlaylistDetails,
     beforeEnter: requireAuth,
     props: true,
+  },
+  {
+    path: "/playlists/user",
+    name: "UserPlaylists",
+    component: () => import("@/views/playlists/UserPlaylists.vue"),
+    beforeEnter: requireAuth,
   },
 ];
 

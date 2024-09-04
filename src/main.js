@@ -6,7 +6,7 @@ import { projectAuth } from "./firebase/config";
 
 import "./assets/main.css";
 
-let app
+let app;
 
 projectAuth.onAuthStateChanged(() => {
   if (!app) {

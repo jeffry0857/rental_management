@@ -10,6 +10,9 @@ const messages = {
       upload_room_photo: "Upload Room Photo",
       room: "房號",
       lastTimeElectricMeter: "上次電表",
+      moveInDate: "起租日",
+      rentDate: "收租日",
+      moveOutDate: "退租日",
     },
   },
   tw: {
@@ -21,6 +24,9 @@ const messages = {
       rent: "租金",
       room: "房號",
       lastTimeElectricMeter: "上次電表",
+      moveInDate: "起租日",
+      rentDate: "收租日",
+      moveOutDate: "退租日",
     },
   },
 };

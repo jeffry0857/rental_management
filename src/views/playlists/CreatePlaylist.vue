@@ -7,24 +7,48 @@
     <input type="text" required :placeholder="$t('message.rent')" v-model="rent">
     <input type="text" required :placeholder="$t('message.lastTimeElectricMeter')" v-model="lastTimeElectricMeter">
 
-    <label>{{ $t('message.upload_room_photo') }}</label>
     <textarea required placeholder="Playlist description..." v-model="description"></textarea>
     <input type="file" @change="handleChange">
     <div class="error">{{ fileError }}</div>
 
-
-    <v-menu>
-      <template v-slot:activator="{ props }">
-        <v-btn v-bind="props">
-          {{ formattedDate }}
-        </v-btn>
-      </template>
-      <v-list>
-        <v-list-item>
-          <v-date-picker v-model="selectedMoveInDate"></v-date-picker>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+    <!-- <v-text-field
+      label="First name"
+    ></v-text-field> -->
+    <v-row>
+      <v-col>
+        <label>{{ $t('message.moveInDate') }}</label>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props">
+              {{ formattedMoveInDate }}
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-date-picker v-model="selectedMoveInDate"></v-date-picker>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-col>
+    </v-row>
+    
+    <v-row>
+      <v-col>
+        <label>{{ $t('message.moveOutDate') }}</label>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props">
+              {{ formattedMoveOutDate }}
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-date-picker v-model="selectedMoveOutDate"></v-date-picker>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-col>
+    </v-row>
 
     <div class="error"></div>
     <button v-if="!isPending">Create</button>
@@ -41,17 +65,16 @@ import { timestamp } from '@/firebase/config'
 import { useRouter } from 'vue-router'
 
 export default {
-  // data() {
-  //   return {
-  //     selectedMoveInDate: new Date(),
-  //   };
-  // },
   setup() {
-    const selectedMoveInDate = ref(new Date());
-
-    const formattedDate = computed(() => {
-      return dateToFormat(selectedMoveInDate.value);
+    const selectedMoveInDate = ref(new Date())
+    const formattedMoveInDate = computed(() => {
+      return dateToFormat(selectedMoveInDate.value)
     });
+
+    const selectedMoveOutDate = ref(new Date())
+    const formattedMoveOutDate = computed(() => {
+      return dateToFormat(selectedMoveOutDate.value)
+    })
 
     const { filePath, url, uploadImage } = useStorage()
     const { error, addDoc } = useCollection('playlists')
@@ -110,7 +133,7 @@ export default {
       return `${year}, ${month}, ${day}`;
     }
 
-    return { title, description: remark, rent, lastTimeElectricMeter, handleSubmit, handleChange, fileError, isPending, selectedMoveInDate, formattedDate }
+    return { title, description: remark, rent, lastTimeElectricMeter, handleSubmit, handleChange, fileError, isPending, selectedMoveInDate, formattedMoveInDate, selectedMoveOutDate, formattedMoveOutDate }
   }
 }
 </script>

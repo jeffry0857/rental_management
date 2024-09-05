@@ -3,17 +3,41 @@
     <nav>
       <h1>
         <router-link :to="{ name: 'Home' }">
-          <img src="../assets/logo.png"/>
-          Muso Ninjass
+          <v-icon icon="mdi-home" />
         </router-link>
       </h1>
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+          >
+            <v-icon icon="mdi-translate" />
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>
+              <button @click="setLocale('tw')">
+                繁體中文
+              </button>
+            </v-list-item-title>
+            <v-list-item-title>
+              <button @click="setLocale('en')">
+                English
+              </button>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
       <div class="links">
         <div v-if="user">
-          <router-link :to="{ name: 'CreatePlaylist' }">Create Playlist</router-link>
-          <router-link :to="{ name: 'UserPlaylists' }">My Playlists</router-link>
-          <span>Hi there, {{ user.displayName }}</span>
+          <router-link :to="{ name: 'CreatePlaylist' }">
+            <v-icon icon="mdi-plus" />
+          </router-link>
+          <span>Hi, {{ user.displayName }}</span>
           <button @click="handleClick">
-            {{ $t('message.logout') }}
+            <v-icon icon="mdi-logout" />
           </button>
         </div>
         <div v-else>
@@ -24,26 +48,6 @@
             {{ $t('message.login') }}
           </router-link>
         </div>
-      </div>
-      <div class="text-center">
-        <v-btn>
-          <v-menu activator="parent">
-            <v-list>
-              <v-list-item>
-                <v-list-item-title>
-                  <button @click="setLocale('tw')">
-                    繁體中文
-                  </button>
-                </v-list-item-title>
-                <v-list-item-title>
-                  <button @click="setLocale('en')">
-                    English
-                  </button>
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-btn>
       </div>
     </nav>
   </div>
@@ -80,7 +84,7 @@ export default {
 <style scoped>
   .navbar {
     padding: 16px 10px;
-    margin-bottom: 60px;
+    margin: 1%;
     background: white;
   }
   nav {
@@ -89,12 +93,7 @@ export default {
     max-width: 1200px;
     margin: 0 auto;
   }
-  nav img {
-    max-height: 60px;
-  }
-  nav h1 {
-    margin-left: 20px;
-  }
+
   nav .links {
     margin-left: auto;
   }

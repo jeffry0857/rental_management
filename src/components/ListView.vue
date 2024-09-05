@@ -1,29 +1,67 @@
 <template>
-  <div v-for="playlist in playlists" :key="playlist.id">
-    <router-link :to="{ name: 'PlaylistDetails', params: { id: playlist.id}}">
+  <div v-for="room in formattedRoomList" :key="room.id">
+    <!-- <router-link :to="{ name: 'PlaylistDetails', params: { id: room.id}}"> -->
       <div class="single">
         <div class="thumbnail">
-          <img :src="playlist.coverUrl">
+          <img :src="room.coverUrl">
         </div>
         <div class="info">
-          <!-- <span>{{ playlist }}</span> -->
-          <span>{{ playlist.title }}</span>
-          <span>{{ $t('message.rent') }}：{{ playlist.rent }}</span>
+          <span>{{ room.title }}</span>&nbsp;&nbsp;
+          <span>{{ $t('message.rent') }}&nbsp;&nbsp;{{ room.rent }}</span>
           <v-spacer></v-spacer>
-          <span>{{ playlist.moveInDate }} - {{ playlist.moveOutDate }}</span>
-          <!-- <p>Created by {{ playlist.userName }}</p> -->
+          <div>{{ $t('message.moveInDate') }}&nbsp;&nbsp;{{ room.formattedMoveInDate }}</div>
+          <div>{{ $t('message.moveOutDate') }}&nbsp;&nbsp;{{ room.formattedMoveOutDate }}</div>
+          <div>{{ $t('message.lastTimeElectricMeter') }}&nbsp;&nbsp;{{ room.lastTimeElectricMeter }}</div>
+          <div class="d-flex">
+            <!-- <label>{{ $t('message.currentElectricMeter') }}</label> -->
+            <input type="text" required :placeholder="$t('message.currentElectricMeter')" v-model="currentElectricMeter">
+            <button @click="caculateElectricityBill(room.lastTimeElectricMeter)">{{ $t('message.caculate') }}</button>
+          </div>
+          <div class="d-flex justify-space-between">
+            <span>{{ $t('電費') }}&nbsp;&nbsp;{{ electricityBill }}</span>
+            <v-btn>{{ $t('已結清') }}</v-btn>
+          </div>
         </div>
-
-
       </div>
-    </router-link>
+    <!-- </router-link> -->
+    {{ room }}
   </div>
 </template>
 
 <script>
-export default {
-  props: ['playlists']
+import { ref, computed } from 'vue'
 
+export default {
+  props: ['roomList'],
+  setup(props) {
+      const currentElectricMeter = ref('')
+      const electricityBill = ref('')
+      const formatDate = (timestamp) => {
+        const date = new Date(timestamp);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+      };
+
+    const formattedRoomList = computed(() => {
+      return props.roomList.map(room => {
+        return {
+          ...room,
+          formattedMoveInDate: formatDate(room.moveInDate),
+          formattedMoveOutDate: formatDate(room.moveOutDate)
+        };
+      });
+    });
+
+    const caculateElectricityBill = async (lastTimeElectricMeter) => {
+      electricityBill.value = (currentElectricMeter.value - lastTimeElectricMeter) * 5
+    }
+
+    return {
+      formattedRoomList, currentElectricMeter, caculateElectricityBill, electricityBill
+    };
+  }
 }
 </script>
 
@@ -34,7 +72,6 @@ export default {
     padding: 20px;
     border-radius: 10px;
     background: white;
-    margin: 16px 0;
     transition: all ease 0.2s;
   }
   .single:hover {
@@ -54,7 +91,7 @@ export default {
     display: block;
   }
   .info {
-    margin: 0 30px;
+    margin: 0 20px;
   }
   .song-number {
     margin-left: auto;

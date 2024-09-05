@@ -7,12 +7,13 @@
         </div>
         <div class="info">
           <!-- <span>{{ playlist }}</span> -->
-          <h3>{{ playlist.title }}</h3>
-          <p>Created by {{ playlist.userName }}</p>
+          <span>{{ playlist.title }}</span>
+          <span>{{ $t('message.rent') }}：{{ playlist.rent }}</span>
+          <v-spacer></v-spacer>
+          <span>{{ playlist.moveInDate }} - {{ playlist.moveOutDate }}</span>
+          <!-- <p>Created by {{ playlist.userName }}</p> -->
         </div>
-        <div class="song-number">
-          <p>{{ playlist.songs.length }}</p>
-        </div>
+
 
       </div>
     </router-link>
@@ -22,6 +23,7 @@
 <script>
 export default {
   props: ['playlists']
+
 }
 </script>
 

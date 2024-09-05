@@ -2,25 +2,29 @@
   <form @submit.prevent="handleSubmit">
     <h4>Create New Playlist</h4>
     
-    <!-- <input type="text" required placeholder="Playlist title" v-model="title"> -->
+    <input type="text" required placeholder="Playlist title" v-model="title">
     
     <input type="text" required :placeholder="$t('message.rent')" v-model="rent">
-    <v-text-field
-      v-model="title"
-      :label="$t('message.room')"
-      :placeholder="$t('message.room')"
-      type="input"
-    ></v-text-field>
-    <v-text-field
-      v-model="lastTimeElectricMeter"
-      :label="$t('message.lastTimeElectricMeter')"
-      :placeholder="$t('message.lastTimeElectricMeter')"
-      type="input"
-    ></v-text-field>
+    <input type="text" required :placeholder="$t('message.lastTimeElectricMeter')" v-model="lastTimeElectricMeter">
+
     <label>{{ $t('message.upload_room_photo') }}</label>
     <textarea required placeholder="Playlist description..." v-model="description"></textarea>
     <input type="file" @change="handleChange">
     <div class="error">{{ fileError }}</div>
+
+
+    <v-menu>
+      <template v-slot:activator="{ props }">
+        <v-btn v-bind="props">
+          {{ formattedDate }}
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-date-picker v-model="selectedMoveInDate"></v-date-picker>
+        </v-list-item>
+      </v-list>
+    </v-menu>
 
     <div class="error"></div>
     <button v-if="!isPending">Create</button>
@@ -29,7 +33,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import useStorage from '@/composables/useStorage'
 import useCollection from '@/composables/useCollection'
 import getUser from '@/composables/getUser'
@@ -37,7 +41,18 @@ import { timestamp } from '@/firebase/config'
 import { useRouter } from 'vue-router'
 
 export default {
+  // data() {
+  //   return {
+  //     selectedMoveInDate: new Date(),
+  //   };
+  // },
   setup() {
+    const selectedMoveInDate = ref(new Date());
+
+    const formattedDate = computed(() => {
+      return dateToFormat(selectedMoveInDate.value);
+    });
+
     const { filePath, url, uploadImage } = useStorage()
     const { error, addDoc } = useCollection('playlists')
     const { user } = getUser()
@@ -88,7 +103,14 @@ export default {
       }
     }
 
-    return { title, description: remark, rent, lastTimeElectricMeter, handleSubmit, handleChange, fileError, isPending }
+    const dateToFormat = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}, ${month}, ${day}`;
+    }
+
+    return { title, description: remark, rent, lastTimeElectricMeter, handleSubmit, handleChange, fileError, isPending, selectedMoveInDate, formattedDate }
   }
 }
 </script>

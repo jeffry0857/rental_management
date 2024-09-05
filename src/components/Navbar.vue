@@ -1,19 +1,49 @@
 <template>
   <div class="navbar">
     <nav>
-      <img src="@/assets/logo.png"/>
-      <h1><router-link :to="{ name: 'Home' }">Muso Ninjas</router-link></h1>
+      <h1>
+        <router-link :to="{ name: 'Home' }">
+          <img src="../assets/logo.png"/>
+          Muso Ninjass
+        </router-link>
+      </h1>
       <div class="links">
         <div v-if="user">
           <router-link :to="{ name: 'CreatePlaylist' }">Create Playlist</router-link>
           <router-link :to="{ name: 'UserPlaylists' }">My Playlists</router-link>
           <span>Hi there, {{ user.displayName }}</span>
-          <button @click="handleClick">Logout</button>
+          <button @click="handleClick">
+            {{ $t('message.logout') }}
+          </button>
         </div>
         <div v-else>
-          <router-link class="btn" :to="{ name: 'Signup' }">Signup</router-link>
-          <router-link class="btn" :to="{ name: 'Login' }">Login</router-link>
+          <router-link class="btn" :to="{ name: 'Signup' }">
+            {{ $t('message.signup') }}
+          </router-link>
+          <router-link class="btn" :to="{ name: 'Login' }">
+            {{ $t('message.login') }}
+          </router-link>
         </div>
+      </div>
+      <div class="text-center">
+        <v-btn>
+          <v-menu activator="parent">
+            <v-list>
+              <v-list-item>
+                <v-list-item-title>
+                  <button @click="setLocale('tw')">
+                    繁體中文
+                  </button>
+                </v-list-item-title>
+                <v-list-item-title>
+                  <button @click="setLocale('en')">
+                    English
+                  </button>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-btn>
       </div>
     </nav>
   </div>
@@ -23,6 +53,8 @@
 import getUser from '../composables/getUser'
 import useLogout from '../composables/useLogout'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n';
+import { ref } from 'vue';
 
 export default {
   setup() {
@@ -32,11 +64,15 @@ export default {
 
     const handleClick = async () => {
       await logout()
-      console.log('logged out')
       router.push({ name: 'Login' })
     }
 
-    return { handleClick, user }
+    const { t, locale } = useI18n();
+    const setLocale = (newLocale) => {
+      locale.value = newLocale
+    }
+
+    return { handleClick, user, t, setLocale }
   }
 }
 </script>

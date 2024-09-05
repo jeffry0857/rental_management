@@ -6,12 +6,14 @@
           <img :src="playlist.coverUrl">
         </div>
         <div class="info">
+          <!-- <span>{{ playlist }}</span> -->
           <h3>{{ playlist.title }}</h3>
           <p>Created by {{ playlist.userName }}</p>
         </div>
         <div class="song-number">
           <p>{{ playlist.songs.length }}</p>
         </div>
+
       </div>
     </router-link>
   </div>

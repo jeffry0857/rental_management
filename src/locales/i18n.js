@@ -8,6 +8,8 @@ const messages = {
       logout: "Log out",
       signup: "Sign up",
       upload_room_photo: "Upload Room Photo",
+      room: "房號",
+      lastTimeElectricMeter: "上次電表",
     },
   },
   tw: {
@@ -16,6 +18,9 @@ const messages = {
       logout: "登出",
       signup: "註冊",
       upload_room_photo: "上傳房間照片",
+      rent: "租金",
+      room: "房號",
+      lastTimeElectricMeter: "上次電表",
     },
   },
 };

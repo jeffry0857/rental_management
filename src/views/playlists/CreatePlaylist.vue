@@ -1,10 +1,24 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <h4>Create New Playlist</h4>
-    <input type="text" required placeholder="Playlist title" v-model="title">
+    
+    <!-- <input type="text" required placeholder="Playlist title" v-model="title"> -->
+    
+    <input type="text" required :placeholder="$t('message.rent')" v-model="rent">
+    <v-text-field
+      v-model="title"
+      :label="$t('message.room')"
+      :placeholder="$t('message.room')"
+      type="input"
+    ></v-text-field>
+    <v-text-field
+      v-model="lastTimeElectricMeter"
+      :label="$t('message.lastTimeElectricMeter')"
+      :placeholder="$t('message.lastTimeElectricMeter')"
+      type="input"
+    ></v-text-field>
+    <label>{{ $t('message.upload_room_photo') }}</label>
     <textarea required placeholder="Playlist description..." v-model="description"></textarea>
-
-    <label>Upload playlist cover image</label>
     <input type="file" @change="handleChange">
     <div class="error">{{ fileError }}</div>
 
@@ -30,7 +44,9 @@ export default {
     const router = useRouter()
 
     const title = ref('')
-    const description = ref('')
+    const remark = ref('')
+    const rent = ref('')
+    const lastTimeElectricMeter = ref('')
     const file = ref(null)
     const fileError = ref(null)
     const isPending = ref(false)
@@ -41,7 +57,9 @@ export default {
         await uploadImage(file.value)
         const res = await addDoc({
           title: title.value,
-          description: description.value,
+          remark: remark.value,
+          rent: rent.value,
+          lastTimeElectricMeter: lastTimeElectricMeter.value,
           userId: user.value.uid,
           userName: user.value.displayName,
           coverUrl: url.value,
@@ -70,7 +88,7 @@ export default {
       }
     }
 
-    return { title, description, handleSubmit, handleChange, fileError, isPending }
+    return { title, description: remark, rent, lastTimeElectricMeter, handleSubmit, handleChange, fileError, isPending }
   }
 }
 </script>

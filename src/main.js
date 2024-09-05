@@ -6,19 +6,12 @@ import { projectAuth } from "./firebase/config";
 import i18n from "./locales/i18n";
 import "./assets/main.css";
 import "vuetify/styles";
-import { createVuetify } from "vuetify";
-import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "@mdi/font/css/materialdesignicons.css";
 
-const vuetify = createVuetify({
-  icons: {
-    defaultSet: "mdi",
-    aliases,
-    sets: {
-      mdi,
-    },
-  },
-});
+import vuetify from "./plugins/vuetify";
+import { loadFonts } from "./plugins/webfontloader";
+
+loadFonts();
 
 let app;
 

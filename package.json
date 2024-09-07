@@ -10,6 +10,7 @@
     "@headlessui/vue": "^1.7.22",
     "@heroicons/vue": "^2.1.5",
     "@mdi/font": "5.9.55",
+    "body-parser": "1.18.2",
     "core-js": "^3.8.3",
     "firebase": "^10.8.0",
     "roboto-fontface": "*",

@@ -1,32 +1,80 @@
 <template>
   <div class="error" v-if="error">{{ error }}</div>
-  <div v-if="playlist" class="playlist-details">
-
+  <form v-if="playlist" class="playlist-details">
+    <h4>{{ $t('message.edit') }}</h4>
     <!-- playlist information -->
-    <div class="playlist-info">
-      <div class="cover">
+    <div class="playlist-info mt-1">
+      <v-row>
+        <v-col>
+          <v-text-field
+            v-model="playlist.title"
+            :label="$t('message.room')">
+          </v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field
+            v-model="playlist.lastTimeElectricMeter"
+            :label="$t('message.lastTimeElectricMeter')">
+          </v-text-field>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-text-field
+            v-model="playlist.rent"
+            :label="$t('message.rent')">
+          </v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field
+            v-model="playlist.deposit"
+            :label="$t('message.deposit')">
+          </v-text-field>
+        </v-col>
+      </v-row>
+      <textarea :label="$t('message.remark')"
+        v-model="playlist.remark"></textarea>
+
+      <div v-if="playlist.coverUrl !== null" class="cover">
         <img :src="playlist.coverUrl">
       </div>
-      <h2>{{ playlist.title }}</h2>
-      <p class="username">Created by {{ playlist.userName }}</p>
-      <p class="description">{{ playlist.description }}</p>
-      <button v-if="ownership" @click="handleDelete">Delete Playlist</button>
+      <button @click="update(playlist)">
+        {{ $t('message.update') }}
+      </button>
     </div>
+    <!-- <button v-if="ownership" @click="handleDelete">
+      Delete Playlist
+    </button> -->
 
     <!-- song list -->
-    <div class="song-list">
-      <div v-if="!playlist.songs.length">No songs have been added to this playlist yet.</div>
-      <div v-for="song in playlist.songs" :key="song.id" class="single-song">
+    <!-- <div class="song-list">
+      <div v-if="!playlist.songs.length">
+        No songs have been added to this playlist yet.
+      </div>
+      <div v-for="song in playlist.songs"
+        :key="song.id" class="single-song">
         <div class="details">
           <h3>{{ song.title }}</h3>
           <p>{{ song.artist }}</p>
         </div>
-        <button v-if="ownership" @click="handleClick(song.id)">delete</button>
+        <button v-if="ownership"
+          @click="handleClick(song.id)">
+          delete
+        </button>
       </div>
       <AddSong :playlist="playlist" />
-    </div>
+    </div> -->
     
-  </div>
+    <!-- 更新後成功提示 -->
+    <v-snackbar v-model="showSnackbar" :timeout="3000">
+      {{ $t('message.updateSuccessful') }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" text v-bind="attrs" @click="showSnackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </form>
 </template>
 
 <script>
@@ -34,8 +82,9 @@ import AddSong from '@/components/AddSong.vue'
 import useStorage from '@/composables/useStorage'
 import useDocument from '@/composables/useDocument'
 import getDocument from '@/composables/getDocument'
+import useCollection from '@/composables/useCollection'
 import getUser from '@/composables/getUser'
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -44,9 +93,11 @@ export default {
   setup(props) {
     const { error, document: playlist } = getDocument('playlists', props.id)
     const { user } = getUser()
-    const { deleteDoc, updateDoc } = useDocument('playlists', props.id)
+    const { deleteDoc } = useDocument('playlists', props.id)
+    const { updateDoc } = useCollection('playlists', props)
     const { deleteImage } = useStorage()
     const router = useRouter()
+    const showSnackbar = ref(false)
 
     const ownership = computed(() => {
       return playlist.value 
@@ -65,17 +116,41 @@ export default {
       await updateDoc({ songs })
     }
 
-    return { error, playlist, ownership, handleDelete, handleClick }
+    const update = async (room) => {
+      try {
+        await updateDoc({
+          id: room.id,
+          title: room.title,
+          rent: Number(room.rent),
+          deposit: Number(room.deposit),
+          moveInDate: room.moveInDate,
+          moveOutDate: room.moveOutDate,
+          lastTimeElectricMeter: Number(room.lastTimeElectricMeter),
+          remark: room.remark,
+          userId: room.userId,
+          userName: room.userName,
+          coverUrl: room.coverUrl,
+          filePath: room.filePath,
+          songs: [],
+          createdAt: room.createdAt
+        })
+        showSnackbar.value = true
+      } catch (err) {
+        console.error("Update failed", err)
+      }
+    }
+
+    return { error, playlist, ownership, handleDelete, handleClick, update, showSnackbar }
   }
 }
 </script>
 
 <style>
-  .playlist-details {
+  /* .playlist-details {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 80px;
-  }
+  } */
   .cover {
     overflow: hidden;
     border-radius: 20px;
@@ -106,7 +181,7 @@ export default {
   .username {
     color: #999;
   }
-  .description {
+  .remark {
     text-align: left;
   }
   .single-song {

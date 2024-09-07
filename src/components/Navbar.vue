@@ -12,7 +12,7 @@
         </template>
         <v-list>
           <v-list-item>
-            <v-list-item-title>
+            <v-list-item-title class="mb-1">
               <button @click="setLocale('tw')">
                 繁體中文
               </button>
@@ -82,7 +82,7 @@ export default {
   }
   .navbar {
     padding: 16px 10px;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     background: white;
   }
   nav {
@@ -95,7 +95,7 @@ export default {
   nav .links {
     margin-left: auto;
   }
-  
+
   nav .links a, button {
     margin-left: 16px;
     font-size: 14px;

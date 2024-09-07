@@ -33,7 +33,4 @@ export default {
     margin-bottom: 30px;
     border-bottom: 1px solid var(--secondary)
   }
-  .btn {
-    margin-top: 20px;
-  }
 </style>

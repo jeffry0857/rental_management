@@ -21,7 +21,25 @@ const useCollection = (collection) => {
     }
   };
 
-  return { error, addDoc, isPending };
+  const updateDoc = async (doc) => {
+    error.value = null;
+    isPending.value = true;
+
+    try {
+      const res = await projectFirestore
+        .collection(collection)
+        .doc(doc.id)
+        .update(doc);
+      isPending.value = false;
+      console.log("res : ", res);
+      return res;
+    } catch (err) {
+      console.log(err.message);
+      error.value = "could not send the message";
+      isPending.value = false;
+    }
+  };
+  return { error, addDoc, updateDoc, isPending };
 };
 
 export default useCollection;

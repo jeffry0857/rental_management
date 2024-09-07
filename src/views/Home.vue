@@ -2,7 +2,7 @@
   <div class="home">
     <div v-if="error" class="error">Could not fetch the data</div>
     <div v-if="documents">
-      <ListView :playlists="documents" />
+      <ListView :roomList="documents" />
     </div>
   </div>
 </template>

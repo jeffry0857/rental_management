@@ -1,18 +1,14 @@
 <template>
   <div class="navbar">
     <nav>
-      <h1>
+      <h2>
         <router-link :to="{ name: 'Home' }">
           <v-icon icon="mdi-home" />
         </router-link>
-      </h1>
+      </h2>
       <v-menu>
         <template v-slot:activator="{ props }">
-          <v-btn
-            v-bind="props"
-          >
-            <v-icon icon="mdi-translate" />
-          </v-btn>
+          <v-icon v-bind="props" icon="mdi-translate" />
         </template>
         <v-list>
           <v-list-item>
@@ -58,7 +54,6 @@ import getUser from '../composables/getUser'
 import useLogout from '../composables/useLogout'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n';
-import { ref } from 'vue';
 
 export default {
   setup() {
@@ -82,9 +77,12 @@ export default {
 </script>
 
 <style scoped>
+  h2 {
+    margin-right: 16px;
+  }
   .navbar {
     padding: 16px 10px;
-    margin: 1%;
+    margin-bottom: 1rem;
     background: white;
   }
   nav {
@@ -97,6 +95,7 @@ export default {
   nav .links {
     margin-left: auto;
   }
+  
   nav .links a, button {
     margin-left: 16px;
     font-size: 14px;

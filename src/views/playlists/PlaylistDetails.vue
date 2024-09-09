@@ -41,10 +41,10 @@
       <button @click="update(playlist)">
         {{ $t('message.update') }}
       </button>
+      <button v-if="ownership" @click="handleDelete">
+        {{ $t('message.delete') }}
+      </button>
     </div>
-    <!-- <button v-if="ownership" @click="handleDelete">
-      Delete Playlist
-    </button> -->
 
     <!-- song list -->
     <!-- <div class="song-list">
@@ -69,7 +69,7 @@
     <v-snackbar v-model="showSnackbar" :timeout="3000">
       {{ $t('message.updateSuccessful') }}
       <template v-slot:action="{ attrs }">
-        <v-btn color="white" text v-bind="attrs" @click="showSnackbar = false">
+        <v-btn color="red" text v-bind="attrs" @click="showSnackbar = false">
           Close
         </v-btn>
       </template>

@@ -3,12 +3,12 @@
     <nav>
       <h2>
         <router-link :to="{ name: 'Home' }">
-          <v-icon icon="mdi-home" />
+          <v-icon class="text-white" icon="mdi-home" />
         </router-link>
       </h2>
       <v-menu>
         <template v-slot:activator="{ props }">
-          <v-icon v-bind="props" icon="mdi-translate" />
+          <v-icon class="text-white" v-bind="props" icon="mdi-translate" />
         </template>
         <v-list>
           <v-list-item>
@@ -29,7 +29,7 @@
       <div class="links">
         <div v-if="user">
           <router-link :to="{ name: 'CreatePlaylist' }">
-            <v-icon icon="mdi-plus" />
+            <v-icon class="mdi_plus" icon="mdi-plus" />
           </router-link>
           <span>Hi, {{ user.displayName }}</span>
           <button @click="handleClick">
@@ -82,8 +82,7 @@ export default {
   }
   .navbar {
     padding: 16px 10px;
-    margin-bottom: 2rem;
-    background: white;
+    background: linear-gradient(to top left, #ffffff, #4f515a);
   }
   nav {
     display: flex;
@@ -106,5 +105,11 @@ export default {
     margin-left: 16px;
     padding-left: 16px;
     border-left: 1px solid #eee;
+  }
+  .mdi_plus {
+    border: 0.1px solid #000;
+    border-radius: 50%;
+    padding: 10px;
+    background-color: transparent
   }
 </style>

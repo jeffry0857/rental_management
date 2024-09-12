@@ -114,8 +114,8 @@
     <input type="file" @change="handleChange">
     <div class="error">{{ fileError }}</div>
     <div class="error"></div>
-    <button v-if="!isPending">{{ $t('message.create') }}</button>
-    <button v-else disabled>{{ $t('message.saving') }}...</button>
+    <button v-if="!isPending" variant="tonal">{{ $t('message.create') }}</button>
+    <button v-else disabled variant="tonal">{{ $t('message.saving') }}...</button>
   </form>
 </template>
 

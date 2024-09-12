@@ -24,14 +24,12 @@ const useCollection = (collection) => {
   const updateDoc = async (doc) => {
     error.value = null;
     isPending.value = true;
-
     try {
       const res = await projectFirestore
         .collection(collection)
         .doc(doc.id)
         .update(doc);
       isPending.value = false;
-      console.log("res : ", res);
       return res;
     } catch (err) {
       console.log(err.message);

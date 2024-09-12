@@ -1,10 +1,14 @@
 import { watchEffect, ref } from "vue";
 import { projectFirestore } from "../firebase/config";
+import { useI18n } from "vue-i18n";
 
 const getDocument = (collection, id) => {
   let document = ref(null);
   let error = ref(null);
-
+  const { t, locale } = useI18n();
+  const setLocale = (newLocale) => {
+    locale.value = newLocale;
+  };
   // register the firestore collection reference
   let documentRef = projectFirestore.collection(collection).doc(id);
 
@@ -15,7 +19,7 @@ const getDocument = (collection, id) => {
         document.value = { ...doc.data(), id: doc.id };
         error.value = null;
       } else {
-        error.value = "that document does not exist";
+        error.value = t("message.roomNotExist");
       }
     },
     (err) => {
@@ -25,10 +29,11 @@ const getDocument = (collection, id) => {
   );
 
   watchEffect((onInvalidate) => {
+    console.log("onInvalidate : ");
     onInvalidate(() => unsub());
   });
 
-  return { error, document };
+  return { t, setLocale, error, document };
 };
 
 export default getDocument;

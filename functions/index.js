@@ -1,66 +1,66 @@
 // LINE Notification
-// const functions = require("firebase-functions");
-// const fetch = require("node-fetch");
-// const admin = require("firebase-admin");
+const functions = require("firebase-functions");
+const fetch = require("node-fetch");
+const admin = require("firebase-admin");
 
-// admin.initializeApp();
-// const firestore = admin.firestore();
+admin.initializeApp();
+const firestore = admin.firestore();
 
-// exports.scheduledLineNotification = functions.pubsub
-//   .schedule("every 1 minutes")
-//   .onRun(async (context) => {
-//     // LINE Notify API URL
-//     const url = "https://notify-api.line.me/api/notify";
+exports.scheduledLineNotification = functions.pubsub
+  .schedule("every 1 minutes")
+  .onRun(async (context) => {
+    // LINE Notify API URL
+    const url = "https://notify-api.line.me/api/notify";
 
-//     // The access token from LINE Notify (replace with your token)
-//     const accessToken = "o6ePf7E5yJ2J8L402iftd3aaV3Yp0r5U29tZ2kiV5dc";
+    // The access token from LINE Notify (replace with your token)
+    const accessToken = "o6ePf7E5yJ2J8L402iftd3aaV3Yp0r5U29tZ2kiV5dc";
 
-//     // Helper function to check if rent is due today
-//     function isRentDueToday(moveInDate) {
-//       const today = new Date();
-//       const moveInDay = new Date(moveInDate);
+    // Helper function to check if rent is due today
+    function isRentDueToday(moveInDate) {
+      const today = new Date();
+      const moveInDay = new Date(moveInDate);
 
-//       // Rent is due on the same day of the month as the move-in date
-//       return today.getDate() === moveInDay.getDate() - 1; // Rent due 1 day before move-in date monthly
-//     }
+      // Rent is due on the same day of the month as the move-in date
+      return today.getDate() === moveInDay.getDate(); // Rent due 1 day before move-in date monthly
+    }
 
-//     try {
-//       // Fetch users from Firestore (assuming the collection is called 'users')
-//       const usersSnapshot = await firestore.collection("playlists").get();
+    try {
+      // Fetch users from Firestore (assuming the collection is called 'users')
+      const usersSnapshot = await firestore.collection("playlists").get();
 
-//       usersSnapshot.forEach(async (doc) => {
-//         const roomData = doc.data();
-//         const moveInDate = roomData.moveInDate;
-//         // Ensure moveInDate is a valid date and check if rent is due today
-//         if (isRentDueToday(moveInDate)) {
-//           const message = `${roomData.title} 房要拍電錶了`;
+      usersSnapshot.forEach(async (doc) => {
+        const roomData = doc.data();
+        const moveInDate = roomData.moveInDate;
+        // Ensure moveInDate is a valid date and check if rent is due today
+        if (isRentDueToday(moveInDate)) {
+          const message = `${roomData.title} 房要拍電錶了`;
 
-//           // Send a LINE notification for the user
-//           const options = {
-//             method: "POST",
-//             headers: {
-//               Authorization: `Bearer ${accessToken}`,
-//               "Content-Type": "application/x-www-form-urlencoded",
-//             },
-//             body: `message=${message}`,
-//           };
+          // Send a LINE notification for the user
+          const options = {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `message=${message}`,
+          };
 
-//           // Send the POST request to LINE Notify API
-//           const response = await fetch(url, options);
-//           const data = await response.json();
+          // Send the POST request to LINE Notify API
+          const response = await fetch(url, options);
+          const data = await response.json();
 
-//           // Log the response from LINE
-//           console.log(`LINE notification sent for user ${doc.id}:`, data);
-//         }
-//       });
+          // Log the response from LINE
+          console.log(`LINE notification sent for user ${doc.id}:`, data);
+        }
+      });
 
-//       // Indicate the function ran successfully
-//       return null;
-//     } catch (error) {
-//       console.error("Error sending LINE notification:", error);
-//       throw new Error("Failed to send LINE notification");
-//     }
-//   });
+      // Indicate the function ran successfully
+      return null;
+    } catch (error) {
+      console.error("Error sending LINE notification:", error);
+      throw new Error("Failed to send LINE notification");
+    }
+  });
 
 /////////
 // Google App Script to retrive latest data from firebase
@@ -82,33 +82,34 @@
 
 ////////////////////
 
-const functions = require("firebase-functions");
-const fetch = require("node-fetch");
+// 下方程式碼會自動將db資料寫入 Google Sheet
+// const functions = require("firebase-functions");
+// const fetch = require("node-fetch");
 
-exports.onFirestorePlaylistUpdate = functions.firestore
-  .document("playlists/{playlistId}")
-  .onWrite((change, context) => {
-    const playlistId = context.params.playlistId;
-    const updatedData = change.after.exists ? change.after.data() : null;
-    console.log("updatedData : ", updatedData);
-    const googleAppsScriptWebhookUrl =
-      "https://script.google.com/macros/s/AKfycbyG5GMHIU7_KzOn7l9pmWWh8nfdBKJJ-eFwdEDacn16GJHLIAMYF4mmorK9rqbZHl_q/exec";
+// exports.onFirestorePlaylistUpdate = functions.firestore
+//   .document("playlists/{playlistId}")
+//   .onWrite((change, context) => {
+//     const playlistId = context.params.playlistId;
+//     const updatedData = change.after.exists ? change.after.data() : null;
+//     console.log("updatedData : ", updatedData);
+//     const googleAppsScriptWebhookUrl =
+//       "https://script.google.com/macros/s/AKfycbyG5GMHIU7_KzOn7l9pmWWh8nfdBKJJ-eFwdEDacn16GJHLIAMYF4mmorK9rqbZHl_q/exec";
 
-    return fetch(googleAppsScriptWebhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ playlistId, updatedData }),
-    })
-      .then((response) => {
-        return response.text(); // Read response as text
-      })
-      .then((data) => {
-        console.log("Google Apps Script called successfully:", data);
-      })
-      .catch((error) => {
-        console.error("Error calling Google Apps Script:", error);
-      });
-  });
+//     return fetch(googleAppsScriptWebhookUrl, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ playlistId, updatedData }),
+//     })
+//       .then((response) => {
+//         return response.text(); // Read response as text
+//       })
+//       .then((data) => {
+//         console.log("Google Apps Script called successfully:", data);
+//       })
+//       .catch((error) => {
+//         console.error("Error calling Google Apps Script:", error);
+//       });
+//   });
 
 /////////////////
 

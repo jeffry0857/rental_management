@@ -1,19 +1,18 @@
 <template>
   <div class="error" v-if="error">{{ error }}</div>
-  <form v-if="playlist" class="playlist-details">
-    <h4>{{ $t('message.edit') }}</h4>
-    <!-- playlist information -->
+  <v-card v-if="room" max-height="900px" variant="variant" class="ma-4 pa-3">
+    <v-card-text>{{ $t('message.edit') }}</v-card-text>
     <div class="playlist-info mt-1">
       <v-row>
         <v-col>
           <v-text-field
-            v-model="playlist.title"
+            v-model="room.title"
             :label="$t('message.room')">
           </v-text-field>
         </v-col>
         <v-col>
           <v-text-field
-            v-model="playlist.lastTimeElectricMeter"
+            v-model="room.lastTimeElectricMeter"
             :label="$t('message.lastTimeElectricMeter')">
           </v-text-field>
         </v-col>
@@ -21,27 +20,125 @@
       <v-row>
         <v-col>
           <v-text-field
-            v-model="playlist.rent"
+            v-model="room.rent"
             :label="$t('message.rent')">
           </v-text-field>
         </v-col>
         <v-col>
           <v-text-field
-            v-model="playlist.deposit"
+            v-model="room.deposit"
             :label="$t('message.deposit')">
           </v-text-field>
         </v-col>
       </v-row>
-      <textarea :label="$t('message.remark')"
-        v-model="playlist.remark"></textarea>
-
-      <div v-if="playlist.coverUrl !== null" class="cover">
-        <img :src="playlist.coverUrl">
+      <v-row>
+        <v-col cols="6" sm="5">
+          <label>{{ $t('message.moveInDate') }}</label>
+        </v-col>
+        <v-col>
+          <v-menu
+            v-model="isMoveInDatePopedUp"
+            :close-on-content-click="false"
+            location="top"
+          >
+            <template v-slot:activator="{ props }">
+              <v-textfield v-bind="props">
+                {{ formattedMoveInDate }}
+              </v-textfield>
+            </template>
+            <v-card>
+              <v-list>
+                <v-list-item>
+                  <v-date-picker v-model="selectedMoveInDate"></v-date-picker>
+                </v-list-item>
+              </v-list>
+              <template v-slot:actions>
+                <v-btn @click="isMoveInDatePopedUp = false"
+                  :text="$t('message.confirm')"
+                  block
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-menu>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6" sm="5">
+          <label>
+            {{ $t('message.moveOutDate') }}
+          </label>
+        </v-col>
+        <v-col>
+          <v-menu
+            v-model="isMoveOutDatePopedUp"
+            :close-on-content-click="false"
+            location="bottom"
+          >
+            <template v-slot:activator="{ props }">
+              <v-textfield v-bind="props">
+                {{ formattedMoveOutDate }}
+              </v-textfield>
+            </template>
+            <v-card>
+              <v-list>
+                <v-list-item>
+                  <v-date-picker v-model="selectedMoveOutDate"></v-date-picker>
+                </v-list-item>
+              </v-list>
+              <template v-slot:actions>
+                <v-btn @click="isMoveOutDatePopedUp = false"
+                  :text="$t('message.confirm')"
+                  block
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-menu>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="6" sm="5">
+          <label>
+            {{ $t('message.lastTimePaid') }}
+          </label>
+        </v-col>
+        <v-col>
+          <v-menu
+            v-model="isLastTimePaid"
+            :close-on-content-click="false"
+            location="bottom"
+          >
+            <template v-slot:activator="{ props }">
+              <v-textfield v-bind="props">
+                {{ formattedLastTimePaid }}
+              </v-textfield>
+            </template>
+            <v-card>
+              <v-list>
+                <v-list-item>
+                  <v-date-picker v-model="selectedLastTimePaid"></v-date-picker>
+                </v-list-item>
+              </v-list>
+              <template v-slot:actions>
+                <v-btn @click="isLastTimePaid = false"
+                  :text="$t('message.confirm')"
+                  block
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-menu>
+        </v-col>
+      </v-row>
+      <textarea variant="filled" :label="$t('message.remark') "
+      v-model="room.remark"></textarea>
+      <div v-if="room.coverUrl !== null" class="cover">
+        <img :src="room.coverUrl">
       </div>
-      <button @click="update(playlist)">
+      <button @click="update(room)" class="mr-2">
+        <v-icon icon="mdi-update" />
         {{ $t('message.update') }}
       </button>
-      <button v-if="ownership" @click="handleDelete">
+      <button @click="handleDelete">
+        <v-icon icon="mdi-delete" />
         {{ $t('message.delete') }}
       </button>
     </div>
@@ -65,67 +162,79 @@
       <AddSong :playlist="playlist" />
     </div> -->
     
-    <!-- 更新後成功提示 -->
-    <v-snackbar v-model="showSnackbar" :timeout="3000">
-      {{ $t('message.updateSuccessful') }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="red" text v-bind="attrs" @click="showSnackbar = false">
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
-  </form>
+    <!-- {{ room }} -->
+
+  </v-card>
+  <!-- 更新後成功提示 -->
+  <v-snackbar variant="tonal" class="mt-4"
+    v-model="showSnackbar" :timeout="3000"
+  >
+    {{ $t('message.updateSuccessful') }}
+  </v-snackbar>
 </template>
 
 <script>
+import { ref, computed } from 'vue'
 import AddSong from '@/components/AddSong.vue'
-import useStorage from '@/composables/useStorage'
 import useDocument from '@/composables/useDocument'
 import getDocument from '@/composables/getDocument'
-import useCollection from '@/composables/useCollection'
-import getUser from '@/composables/getUser'
-import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import useCollection from '@/composables/useCollection'
 
 export default {
   props: ['id'],
   components: { AddSong },
   setup(props) {
-    const { error, document: playlist } = getDocument('playlists', props.id)
-    const { user } = getUser()
+    const isMoveInDatePopedUp = ref(false)
+    const isMoveOutDatePopedUp = ref(false)
+    const isLastTimePaid = ref(false)
+    const selectedMoveInDate = ref(new Date())
+    const formattedMoveInDate = computed(() => {
+      return dateToFormat(selectedMoveInDate.value)
+    });
+    const selectedMoveOutDate = ref(new Date())
+    const formattedMoveOutDate = computed(() => {
+      return dateToFormat(selectedMoveOutDate.value)
+    })
+    const selectedLastTimePaid = ref(new Date())
+    const formattedLastTimePaid = computed(() => {
+      return dateToFormat(selectedLastTimePaid.value)
+    });
+    const { error, document: room } = getDocument('playlists', props.id)
+    const { updateDoc } = useCollection('playlists', props.id)
     const { deleteDoc } = useDocument('playlists', props.id)
-    const { updateDoc } = useCollection('playlists', props)
-    const { deleteImage } = useStorage()
+    // const { deleteImage } = useStorage()
     const router = useRouter()
     const showSnackbar = ref(false)
 
-    const ownership = computed(() => {
-      return playlist.value 
-        && user.value 
-        && user.value.uid == playlist.value.userId
-    })
-
     const handleDelete = async () => {
       await deleteDoc()
-      await deleteImage(playlist.value.filePath)
+      // await deleteImage(room.value.filePath)
       router.push({ name: 'Home' })
     }
 
     const handleClick = async (id) => {
       const songs = playlist.value.songs.filter((song) => song.id != id)
+      console.log("songs : ", songs)
       await updateDoc({ songs })
     }
 
     const update = async (room) => {
+      if (!room) {
+        console.error("Room data not available");
+        return;
+      }
+
       try {
         await updateDoc({
           id: room.id,
           title: room.title,
           rent: Number(room.rent),
           deposit: Number(room.deposit),
-          moveInDate: room.moveInDate,
+          moveInDate: selectedMoveInDate.value.getTime(),
           moveOutDate: room.moveOutDate,
           lastTimeElectricMeter: Number(room.lastTimeElectricMeter),
+          lastTimePaid: selectedLastTimePaid.value.getTime(),
           remark: room.remark,
           userId: room.userId,
           userName: room.userName,
@@ -135,22 +244,28 @@ export default {
           createdAt: room.createdAt
         })
         showSnackbar.value = true
+        setTimeout(() => {
+          showSnackbar.value = false
+        }, 3000)
       } catch (err) {
         console.error("Update failed", err)
       }
     }
 
-    return { error, playlist, ownership, handleDelete, handleClick, update, showSnackbar }
+    // Date Object to YYYYMMDD
+    const dateToFormat = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}, ${month}, ${day}`;
+    }
+
+    return { error, room, handleDelete, handleClick, update, showSnackbar, selectedMoveInDate, selectedMoveOutDate, formattedMoveInDate, formattedMoveOutDate, isMoveOutDatePopedUp, isMoveInDatePopedUp, selectedLastTimePaid, formattedLastTimePaid, isLastTimePaid }
   }
 }
 </script>
 
 <style>
-  /* .playlist-details {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 80px;
-  } */
   .cover {
     overflow: hidden;
     border-radius: 20px;

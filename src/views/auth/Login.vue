@@ -3,9 +3,19 @@
     <h3>{{ $t('message.login') }}</h3>
     <input type="email" placeholder="Email" v-model="email">
     <input type="password" placeholder="Password" v-model="password">
+    <p class="pa-2 text-disabled font-weight-thin">提示：可使用訪客帳號 user@gmail.com</p>
+    <p class="pa-2 text-disabled font-weight-thin">提示：可使用訪客密碼 123456</p>
     <div v-if="error" class="error">{{ error }}</div>
+    <!-- <v-card>
+      <template v-slot:actions>
+        <button v-if="!isPending"
+          :text="$t('message.login')"
+          block
+        ></button>
+      </template>
+    </v-card> -->
     <button v-if="!isPending">{{ $t('message.login') }}</button>
-    <button v-if="isPending" disabled>Loading</button>
+    <button v-if="isPending" disabled>{{ $t('message.loading') }}</button>
   </form>
 </template>
 

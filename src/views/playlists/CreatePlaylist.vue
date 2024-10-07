@@ -137,7 +137,9 @@
     <button v-if="!isPending" variant="tonal">
       {{ $t('message.create') }}
     </button>
-    <button v-else disabled variant="tonal">{{ $t('message.saving') }}...</button>
+    <button v-else disabled variant="tonal">
+      {{ $t('message.saving') }}...
+    </button>
   </form>
 </template>
 
@@ -146,6 +148,7 @@ import { ref, computed } from 'vue'
 import useStorage from '@/composables/useStorage'
 import useCollection from '@/composables/useCollection'
 import getUser from '@/composables/getUser'
+import dateToFormat from '@/composables/dateTimeConverter'
 import { timestamp } from '@/firebase/config'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n';
@@ -306,15 +309,7 @@ export default {
       }
     }
 
-    // Date Object to YYYYMMDD
-    const dateToFormat = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}/${month}/${day}`;
-    }
-
-    return { t, setLocale, isLastTimePaidPopedUp, isMoveInDatePopedUp, isMoveOutDatePopedUp, title, remark, rent, deposit, lastTimeElectricMeter, handleSubmit, handleChange, fileError, isPending, estimatedPayOn, selectedMoveInDate, formattedMoveInDate, selectedMoveOutDate, formattedMoveOutDate, selectedLastTimePaid, formattedLastTimePaid }
+    return { t, setLocale, isLastTimePaidPopedUp, isMoveInDatePopedUp, isMoveOutDatePopedUp, title, remark, rent, deposit, lastTimeElectricMeter, handleSubmit, handleChange, fileError, isPending, estimatedPayOn, selectedMoveInDate, formattedMoveInDate, selectedMoveOutDate, formattedMoveOutDate, selectedLastTimePaid, formattedLastTimePaid, dateToFormat }
   }
 }
 </script>

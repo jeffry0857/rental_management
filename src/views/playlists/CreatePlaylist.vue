@@ -1,145 +1,117 @@
 <template>
   <form @submit.prevent="handleSubmit">
     <h4>{{ $t('message.create') }}</h4>
-    <!-- 房號/電錶 -->
-    <v-row class="mt-1">
-      <v-col>
-        <v-text-field v-model="title" :label="$t('message.room')"></v-text-field>
-      </v-col>
-      <v-col>
-        <v-text-field v-model="lastTimeElectricMeter" :label="$t('message.lastTimeElectricMeter')"></v-text-field>
-      </v-col>
-    </v-row>
-    <!-- 租金/押金 -->
-    <v-row>
-      <v-col>
-        <v-text-field v-model="rent" :label="$t('message.rent')"></v-text-field>
-      </v-col>
-      <v-col>
-        <v-text-field v-model="deposit" :label="$t('message.deposit')"></v-text-field>
-      </v-col>
-    </v-row>
-    <!-- 起租日 -->
-    <v-row>
-      <v-col>
-        <span>{{ $t('message.moveInDate') }}</span>
-      </v-col>
-      <v-col>
-        <v-menu
-          v-model="isMoveInDatePopedUp"
-          :close-on-content-click="false"
-          location="top"
-        >
-          <template v-slot:activator="{ props }">
-            <v-textfield v-bind="props">
-              {{ formattedMoveInDate }}
-            </v-textfield>
-          </template>
-          <v-card>
-            <v-list>
-              <v-list-item>
-                <v-date-picker v-model="selectedMoveInDate"></v-date-picker>
-              </v-list-item>
-            </v-list>
-            <template v-slot:actions>
-              <v-btn @click="isMoveInDatePopedUp = false"
-                :text="$t('message.confirm')"
-                block
-              ></v-btn>
+    <div class="mt-1">
+      <!-- 房號/電錶 -->
+      <v-row>
+        <v-col>
+          <v-text-field v-model="title" :label="$t('message.room')"></v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field v-model="lastTimeElectricMeter" :label="$t('message.lastTimeElectricMeter')"></v-text-field>
+        </v-col>
+      </v-row>
+      <!-- 租金/押金 -->
+      <v-row>
+        <v-col>
+          <v-text-field v-model="rent" :label="$t('message.rent')"></v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field v-model="deposit" :label="$t('message.deposit')"></v-text-field>
+        </v-col>
+      </v-row>
+      <!-- 起租日 -->
+      <v-row>
+        <v-col>
+          <span>{{ $t('message.moveInDate') }}</span>
+        </v-col>
+        <v-col>
+          <v-menu
+            v-model="isMoveInDatePopedUp"
+            :close-on-content-click="false"
+            location="top"
+          >
+            <template v-slot:activator="{ props }">
+              <v-textfield v-bind="props">
+                {{ formattedMoveInDate }}
+              </v-textfield>
             </template>
-          </v-card>
-        </v-menu>
-      </v-col>
-    </v-row>
-    <!-- 退租日 -->
-    <v-row>
-      <v-col>
-        <span>{{ $t('message.moveOutDate') }}</span>
-      </v-col>
-      <v-col>
-        <v-menu
-          v-model="isMoveOutDatePopedUp"
-          :close-on-content-click="false"
-          location="top"
-        >
-          <template v-slot:activator="{ props }">
-            <v-textfield clearable v-bind="props">
-              {{ formattedMoveOutDate }}
-            </v-textfield>
-          </template>
-          <v-card>
-            <v-list>
-              <v-list-item>
-                <v-date-picker v-model="selectedMoveOutDate"></v-date-picker>
-              </v-list-item>
-            </v-list>
-            <template v-slot:actions>
-              <v-btn @click="isMoveOutDatePopedUp = false"
-                :text="$t('message.confirm')"
-                block
-              ></v-btn>
+            <v-card>
+              <v-list>
+                <v-list-item>
+                  <v-date-picker v-model="selectedMoveInDate"></v-date-picker>
+                </v-list-item>
+              </v-list>
+              <template v-slot:actions>
+                <v-btn @click="isMoveInDatePopedUp = false"
+                  :text="$t('message.confirm')"
+                  block
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-menu>
+        </v-col>
+      </v-row>
+      <!-- 退租日 -->
+      <v-row>
+        <v-col>
+          <span>{{ $t('message.moveOutDate') }}</span>
+        </v-col>
+        <v-col>
+          <v-menu
+            v-model="isMoveOutDatePopedUp"
+            :close-on-content-click="false"
+            location="top"
+          >
+            <template v-slot:activator="{ props }">
+              <v-textfield clearable v-bind="props">
+                {{ formattedMoveOutDate }}
+              </v-textfield>
             </template>
-          </v-card>
-        </v-menu>
-      </v-col>
-    </v-row>
-    <!-- 指定付租日 -->
-    <v-row class="d-flex">
-      <v-col cols="4">
-        <span>指定每月</span>
-      </v-col>
-      <v-col cols="2">
-        <input v-model="estimatedPayOn" type="text" class="underlined-input">
-      </v-col>
-      <v-col cols="4">
-        <span>號付租</span>
-      </v-col>
-    </v-row>
-    <!-- 上次繳租日期 -->
-    <!-- <v-row>
-      <v-col>
-        <span>{{ $t('message.lastTimePaid') }}</span>
-      </v-col>
-      <v-col>
-        <v-menu
-          v-model="isLastTimePaidPopedUp"
-          :close-on-content-click="false"
-          location="top"
-        >
-          <template v-slot:activator="{ props }">
-            <v-textfield clearable v-bind="props">
-              {{ formattedLastTimePaid }}
-            </v-textfield>
-          </template>
-          <v-card>
-            <v-list>
-              <v-list-item>
-                <v-date-picker v-model="selectedLastTimePaid"></v-date-picker>
-              </v-list-item>
-            </v-list>
-            <template v-slot:actions>
-              <v-btn @click="isLastTimePaidPopedUp = false"
-                :text="$t('message.confirm')"
-                block
-              ></v-btn>
-            </template>
-          </v-card>
-        </v-menu>
-      </v-col>
-    </v-row> -->
-    <!-- 備註 -->
-    <v-row>
-      <textarea :placeholder="$t('message.remark')" v-model="remark"></textarea>
-    </v-row>
-    <input type="file" @change="handleChange">
-    <div class="error">{{ fileError }}</div>
-    <div class="error"></div>
-    <button v-if="!isPending" variant="tonal">
-      {{ $t('message.create') }}
-    </button>
-    <button v-else disabled variant="tonal">
-      {{ $t('message.saving') }}...
-    </button>
+            <v-card>
+              <v-list>
+                <v-list-item>
+                  <v-date-picker v-model="selectedMoveOutDate"></v-date-picker>
+                </v-list-item>
+              </v-list>
+              <template v-slot:actions>
+                <v-btn @click="isMoveOutDatePopedUp = false"
+                  :text="$t('message.confirm')"
+                  block
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-menu>
+        </v-col>
+      </v-row>
+      <!-- 指定付租日 -->
+      <v-row>
+        <v-col cols="4">
+          <span>指定每月</span>
+        </v-col>
+        <v-col cols="2">
+          <input v-model="estimatedPayOn" type="text" class="underlined-input">
+        </v-col>
+        <v-col cols="3">
+          <span>號付租</span>
+        </v-col>
+      </v-row>
+      <!-- 備註 -->
+      <v-row>
+        <textarea :placeholder="$t('message.remark')" v-model="remark"></textarea>
+      </v-row>
+      <input type="file" @change="handleChange">
+      <div class="error">{{ fileError }}</div>
+      <div class="error"></div>
+      <v-card-actions class="d-flex justify-space-around">
+        <button v-if="!isPending" variant="tonal">
+          {{ $t('message.create') }}
+        </button>
+        <button v-else disabled variant="tonal">
+          {{ $t('message.saving') }}...
+        </button>
+      </v-card-actions>
+    </div>
   </form>
 </template>
 
